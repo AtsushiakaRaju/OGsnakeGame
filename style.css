@@ -1,0 +1,35 @@
+body {
+    font-family: 'VT323', monospace;
+    touch-action: none; /* Prevents scrolling on touch devices */
+}
+
+.nokia-screen {
+    background-color: #c7f0d8;
+    border: 20px solid #333;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5) inset, 0 5px 15px rgba(0,0,0,0.3);
+}
+
+canvas {
+    background-color: #8bac0f;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.controls-container button {
+    background-color: #555;
+    color: #eee;
+    border: 2px solid #444;
+    box-shadow: 0 3px #333;
+    transition: all 0.1s ease;
+}
+
+.controls-container button:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px #333;
+}
+
+#game-over-modal {
+    background-color: rgba(0, 0, 0, 0.7);
+}

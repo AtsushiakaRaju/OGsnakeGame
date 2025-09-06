@@ -4,7 +4,7 @@ A modern take on the retro **Snake** game, built with **HTML, CSS, and JavaScrip
 Features difficulty modes, mobile-friendly controls, and a retro-inspired design.  
 
 ## 🎮 Play the Game  
-👉 [Play on GitHub Pages](https://your-username.github.io/your-repo-name)  
+👉 [Play on GitHub Pages](https://atsushiakaraju.github.io/OGsnakeGame/)  
 
 ## ✨ Features  
 - **3 Difficulty Modes**  
@@ -40,8 +40,8 @@ Features difficulty modes, mobile-friendly controls, and a retro-inspired design
 ## 📂 Setup & Run Locally  
 1. Clone the repo:  
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/AtsushiakaRaju/OGsnakeGame.git
+   cd OGsnakeGame
 2. Open the index.html in your browser
    That’s it — no build steps needed! 🎉
 

@@ -42,7 +42,7 @@ Features difficulty modes, mobile-friendly controls, and a retro-inspired design
    ```bash
    git clone https://github.com/AtsushiakaRaju/OGsnakeGame.git
    cd OGsnakeGame
-2. Open the index.html in your browser
+2. Open the index.html in your browser.
    That’s it — no build steps needed! 🎉
 
 ## 🧑‍💻 Author

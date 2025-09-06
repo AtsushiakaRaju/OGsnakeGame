@@ -4,65 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classic Snake</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'VT323', monospace;
-            touch-action: none; /* Prevents scrolling on touch devices */
-        }
-        .nokia-screen {
-            background-color: #c7f0d8;
-            border: 20px solid #333;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5) inset, 0 5px 15px rgba(0,0,0,0.3);
-        }
-        canvas {
-            background-color: #8bac0f;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-        .controls-container button {
-            background-color: #555;
-            color: #eee;
-            border: 2px solid #444;
-            box-shadow: 0 3px #333;
-            transition: all 0.1s ease;
-        }
-        .controls-container button:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px #333;
-        }
-        #game-over-modal {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
 
     <div class="w-full max-w-md mx-auto">
         <div class="nokia-screen p-4">
-            <div class="flex justify-between items-center text-gray-800 text-2xl mb-2 px-1">
-                <h1 class="font-bold">SNAKE</h1>
-                <div class="text-right">
-                    <span>SCORE</span>
-                    <span id="score" class="ml-2">0</span>
-                </div>
-            </div>
+            <div class="flex justify-between items-center text-white text-2xl mb-2 px-1">
+    <h1 class="font-bold">SNAKE</h1>
+    <div class="text-right">
+        <span>SCORE</span>
+        <span id="score" class="ml-2">0</span>
+    </div>
+</div>
+
             
             <div class="relative">
                 <canvas id="gameCanvas" width="400" height="400" class="w-full rounded-sm"></canvas>
+
+                <!-- Start Menu -->
+                <div id="start-modal" class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center text-white p-6 rounded-lg">
+                        <h2 class="text-4xl font-bold mb-4">Choose Difficulty</h2>
+                        <div class="flex flex-col gap-2">
+                            <button class="mode-btn bg-green-600 hover:bg-green-700 py-2 px-4 rounded">Easy</button>
+                            <button class="mode-btn bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded">Medium</button>
+                            <button class="mode-btn bg-red-600 hover:bg-red-700 py-2 px-4 rounded">Hard</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Over Menu -->
                 <div id="game-over-modal" class="absolute inset-0 items-center justify-center hidden">
                     <div class="text-center text-white p-6 rounded-lg">
                         <h2 class="text-5xl font-bold mb-2">GAME OVER</h2>
                         <p class="text-xl mb-4">Your score: <span id="finalScore">0</span></p>
-                        <button id="restartButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg text-2xl shadow-lg">RESTART</button>
+                        <h3 class="text-2xl mb-2">Choose Difficulty</h3>
+                        <div class="flex flex-col gap-2">
+                            <button class="mode-btn bg-green-600 hover:bg-green-700 py-2 px-4 rounded">Easy</button>
+                            <button class="mode-btn bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded">Medium</button>
+                            <button class="mode-btn bg-red-600 hover:bg-red-700 py-2 px-4 rounded">Hard</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Controls -->
         <div class="controls-container grid grid-cols-3 gap-2 mt-6 px-8">
             <div></div>
             <button id="up-btn" class="p-4 rounded-md text-2xl col-start-2">▲</button>
@@ -71,176 +62,13 @@
             <button id="down-btn" class="p-4 rounded-md text-2xl">▼</button>
             <button id="right-btn" class="p-4 rounded-md text-2xl">▶</button>
         </div>
+
+        <!-- Pause Button -->
+        <div class="mt-4 text-center">
+            <button id="pauseButton" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg text-xl shadow-lg">PAUSE</button>
+        </div>
     </div>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
-        const gameOverModal = document.getElementById('game-over-modal');
-        const finalScoreElement = document.getElementById('finalScore');
-        const restartButton = document.getElementById('restartButton');
-
-        // Game constants
-        const gridSize = 20;
-        const canvasSize = 400;
-        const tileCount = canvasSize / gridSize;
-
-        // Game state
-        let snake = [{ x: 10, y: 10 }];
-        let food = { x: 15, y: 15 };
-        let dx = 0; // direction x
-        let dy = 0; // direction y
-        let score = 0;
-        let isGameOver = false;
-        let gameLoopInterval;
-
-        // --- Game Logic ---
-
-        function gameLoop() {
-            if (isGameOver) {
-                clearInterval(gameLoopInterval);
-                showGameOver();
-                return;
-            }
-
-            clearCanvas();
-            moveSnake();
-            checkCollision();
-            if (isGameOver) return; // Stop drawing if collision happened
-
-            drawFood();
-            drawSnake();
-        }
-
-        function startGame() {
-            // Reset state
-            snake = [{ x: 10, y: 10 }];
-            dx = 0;
-            dy = 0;
-            score = 0;
-            isGameOver = false;
-            updateScore();
-            generateFood();
-            
-            gameOverModal.style.display = 'none';
-
-            if (gameLoopInterval) clearInterval(gameLoopInterval);
-            gameLoopInterval = setInterval(gameLoop, 200); // Speed of the game
-        }
-
-        function clearCanvas() {
-            ctx.fillStyle = '#8bac0f'; // Nokia screen green
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function drawSnake() {
-            ctx.fillStyle = '#3b82f6'; // Blue color for snake
-            snake.forEach(segment => {
-                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
-            });
-        }
-
-        function moveSnake() {
-            if (dx === 0 && dy === 0) return; // Don't move if not started
-
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-            snake.unshift(head);
-
-            // Check for food collision
-            if (head.x === food.x && head.y === food.y) {
-                score++;
-                updateScore();
-                generateFood();
-            } else {
-                snake.pop();
-            }
-        }
-
-        function generateFood() {
-            food.x = Math.floor(Math.random() * tileCount);
-            food.y = Math.floor(Math.random() * tileCount);
-            // Ensure food doesn't spawn on the snake
-            snake.forEach(segment => {
-                if (segment.x === food.x && segment.y === food.y) {
-                    generateFood();
-                }
-            });
-        }
-
-        function drawFood() {
-            ctx.fillStyle = '#ef4444'; // Red color for food
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize -1, gridSize -1);
-        }
-
-        function checkCollision() {
-            const head = snake[0];
-
-            // Wall collision
-            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                isGameOver = true;
-            }
-
-            // Self collision
-            for (let i = 1; i < snake.length; i++) {
-                if (head.x === snake[i].x && head.y === snake[i].y) {
-                    isGameOver = true;
-                    break;
-                }
-            }
-        }
-
-        function updateScore() {
-            scoreElement.textContent = score;
-        }
-
-        function showGameOver() {
-            finalScoreElement.textContent = score;
-            gameOverModal.style.display = 'flex';
-        }
-
-        // --- Event Listeners ---
-
-        function handleKeyPress(e) {
-            const keyPressed = e.key;
-            
-            const goingUp = dy === -1;
-            const goingDown = dy === 1;
-            const goingRight = dx === 1;
-            const goingLeft = dx === -1;
-
-            if ((keyPressed === 'ArrowLeft' || keyPressed.toLowerCase() === 'a') && !goingRight) {
-                dx = -1;
-                dy = 0;
-            }
-            if ((keyPressed === 'ArrowUp' || keyPressed.toLowerCase() === 'w') && !goingDown) {
-                dx = 0;
-                dy = -1;
-            }
-            if ((keyPressed === 'ArrowRight' || keyPressed.toLowerCase() === 'd') && !goingLeft) {
-                dx = 1;
-                dy = 0;
-            }
-            if ((keyPressed === 'ArrowDown' || keyPressed.toLowerCase() === 's') && !goingUp) {
-                dx = 0;
-                dy = 1;
-            }
-        }
-
-        document.addEventListener('keydown', handleKeyPress);
-        
-        // On-screen controls
-        document.getElementById('up-btn').addEventListener('click', () => { if(dy !== 1) { dx = 0; dy = -1; } });
-        document.getElementById('down-btn').addEventListener('click', () => { if(dy !== -1) { dx = 0; dy = 1; } });
-        document.getElementById('left-btn').addEventListener('click', () => { if(dx !== 1) { dx = -1; dy = 0; } });
-        document.getElementById('right-btn').addEventListener('click', () => { if(dx !== -1) { dx = 1; dy = 0; } });
-
-        restartButton.addEventListener('click', startGame);
-
-        // --- Initial Load ---
-        window.onload = () => {
-             startGame();
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

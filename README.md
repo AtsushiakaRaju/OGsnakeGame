@@ -22,7 +22,7 @@ Features difficulty modes, mobile-friendly controls, and a retro-inspired design
   - Game over screen with restart & difficulty selection  
 
 - **Background & Styling**  
-  - Page background with your custom banner (`background.png`)  
+  - Page background with AOH banner
   - Canvas styled with a clean white border for focus  
 
 ## 🕹️ How to Play  

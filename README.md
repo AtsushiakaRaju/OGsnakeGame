@@ -19,7 +19,7 @@ Features difficulty modes, mobile-friendly controls, and a retro-inspired design
 - **Retro Aesthetic**  
   - Dark theme with neon vibes  
   - Snake head has eyes to indicate direction  
-  - Custom game over screen with restart & difficulty selection  
+  - Game over screen with restart & difficulty selection  
 
 - **Background & Styling**  
   - Page background with your custom banner (`background.png`)  
